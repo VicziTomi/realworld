@@ -1,6 +1,12 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      allowNull: false,
+      autoIncrement: true
+    },
     username: DataTypes.STRING,
     email: DataTypes.STRING ,
     token: DataTypes.STRING,
@@ -8,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     image: DataTypes.STRING  
   }, {});
   User.associate = function(models) {
-      
+      User.hasOne(models.Profile);
   };
   return User;
 };
