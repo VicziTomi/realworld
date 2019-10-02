@@ -10,19 +10,26 @@ router.get('', function(req, res, next) {
 });
 
 // TODO add error handling. Globally...
-router.get('/:id', function(req, res, next) {
-  return models.User.findByPk(req.params.id).then(users => {
-    if (!users) res.sendStatus(404);
-    res.json({ users })
-  });
+// TODO arrow functions, dont use next (instead use it in auth)
+// await - async
+router.get('/:id', async function(req, res, next) {
+  const user = await models.User.findByPk(req.params.id)
+  if (!users) res.sendStatus(404);
+  res.json({ user })
 });
 
+
+// FINISH it
 router.post('', function(req, res, next) {
+  const { username } = req.body;
+  const { email } = req.body;
+  const { bio } = req.body;
+  const { image } = req.body;
   return models.User.create({
-    username: req.body.username,
-    email: req.body.email,
-    bio: req.body.bio,
-    image: req.body.image,
+    username,
+    email, 
+    bio,
+    image,
     createdAt: new Date(),
     updatedAt: new Date()
   }).then(() => {
