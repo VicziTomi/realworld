@@ -1,6 +1,12 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Article = sequelize.define('Article', {
+    id: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: Sequelize.INTEGER
+    },
     title: DataTypes.STRING,
     slug: DataTypes.STRING,
     description: DataTypes.STRING,
@@ -9,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     favoritesCount: DataTypes.INTEGER
   }, {});
   Article.associate = function(models) {
-    // associations can be defined here
+    
   };
   return Article;
 };

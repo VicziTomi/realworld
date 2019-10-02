@@ -9,7 +9,8 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       title: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       slug: {
         type: Sequelize.STRING
@@ -18,7 +19,8 @@ module.exports = {
         type: Sequelize.STRING
       },
       body: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       favorited: {
         type: Sequelize.BOOLEAN
