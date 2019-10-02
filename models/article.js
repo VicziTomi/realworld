@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
-      type: Sequelize.INTEGER
+      type: DataTypes.INTEGER
     },
     title: DataTypes.STRING,
     slug: DataTypes.STRING,
@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     body: DataTypes.STRING,
     favorited: DataTypes.BOOLEAN,
     favoritesCount: DataTypes.INTEGER
+    //TODO add association field!
   }, {});
   Article.associate = function(models) {
     
