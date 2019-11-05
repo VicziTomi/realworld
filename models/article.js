@@ -13,7 +13,6 @@ module.exports = (sequelize, DataTypes) => {
     body: DataTypes.STRING,
     favorited: DataTypes.BOOLEAN,
     favoritesCount: DataTypes.INTEGER
-    //TODO add association field!
   }, {});
   Article.associate = function(models) {
     
