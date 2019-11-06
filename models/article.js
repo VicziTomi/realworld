@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     favoritesCount: DataTypes.INTEGER
   }, {});
   Article.associate = function(models) {
-    
+    Article.belongsToMany(models.Tag, { through: 'ArticleTags'});
   };
   return Article;
 };
