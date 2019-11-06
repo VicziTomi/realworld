@@ -3,21 +3,37 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert('Tags', [{
-      name: 'backend'
+      name: 'backend',
+      createdAt: new Date(),
+      updatedAt: new Date()
     }, {
-      name: 'frontend'
+      name: 'frontend',
+      createdAt: new Date(),
+      updatedAt: new Date()
     }, {
-      name: 'node'
+      name: 'node',
+      createdAt: new Date(),
+      updatedAt: new Date()
     }, {
-      name: 'express'
+      name: 'express',
+      createdAt: new Date(),
+      updatedAt: new Date()
     }, {
-      name: 'sequelize'
+      name: 'sequelize',
+      createdAt: new Date(),
+      updatedAt: new Date()
     }, {
-      name: 'angular'
+      name: 'angular',
+      createdAt: new Date(),
+      updatedAt: new Date()
     }, {
-      name: 'react'
+      name: 'react',
+      createdAt: new Date(),
+      updatedAt: new Date()
     }, {
-      name: 'css'
+      name: 'css',
+      createdAt: new Date(),
+      updatedAt: new Date()
     }
   ]);
   },

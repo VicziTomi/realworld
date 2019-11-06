@@ -72,11 +72,6 @@ module.exports = {
       updatedAt: new Date(),
       articleId: 3,
       tagId: 7
-    }, {
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      articleId: 3,
-      tagId: 8
     }
   ]);
   },
