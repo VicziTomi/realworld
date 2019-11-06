@@ -54,4 +54,23 @@ const getTag = (tag) => {
   });
 }
 
+router.get('/:slug', async (req, res) => {
+  const article = await models.Article.findOne({
+    where: {
+      slug: req.params.slug
+    }
+  });
+  if (!article) res.sendStatus(404);
+  res.json({ article });
+});
+
+router.post('', async (req, res) => {
+  const { title } = req.body;
+  const { description } = req.body;
+  const { body } = req.body;
+  const { tagList } = req.body;
+   
+})
+
+
 module.exports = router;
