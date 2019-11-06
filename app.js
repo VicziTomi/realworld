@@ -3,11 +3,15 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var auth = require('./routes/auth');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var profileRouter = require('./routes/profiles');
 var articlesRouter = require('./routes/articles');
+
+const passport = require('passport');
+require('./passport');
 
 var app = express();
 
@@ -21,8 +25,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
-//TODO authentication
+app.use('/auth', auth);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/profiles', profileRouter);
