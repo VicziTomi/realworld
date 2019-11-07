@@ -11,7 +11,12 @@ passport.use(new LocalStrategy({
     passwordField: 'password'
   }, 
   async (email, password, cb) => {
-    return await models.User.findOne({email, password}) //TODO finish db query!
+    return await models.User.findOne({
+      where: {
+        email: email,
+        password: password
+      }
+    })
     .then(user => {
       if (!user) {
         return cb(null, false, {message: 'Incorrect email or password.'});
@@ -24,10 +29,9 @@ passport.use(new LocalStrategy({
 
 passport.use(new JWTStrategy({
     jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-    secretOrKey   : 'your_jwt_secret'
+    secretOrKey   : 'softKitty'
   },
   function (jwtPayload, cb) {
-    //find the user in db if needed
     return models.User.findOneById(jwtPayload.id)
     .then(user => {
       return cb(null, user);

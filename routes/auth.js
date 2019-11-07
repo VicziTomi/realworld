@@ -6,6 +6,7 @@ const passport = require('passport');
 router.post('/login', function (req, res, next) {
   passport.authenticate('local', {session: false}, (err, user, info) => {
     if (err || !user) {
+      console.log(err);
       return res.status(400).json({
         message: info ? info.message : 'Login failed',
         user: user
@@ -15,8 +16,7 @@ router.post('/login', function (req, res, next) {
       if (err) {
         res.send(err);
       }
-      // generate a signed son web token with the contents of user object and return it in the response
-      const token = jwt.sign(user, 'your_jwt_secret');
+      const token = jwt.sign(user.toJSON(), 'softKitty');
       return res.json({user, token});
     });
   })
