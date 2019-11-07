@@ -32,7 +32,7 @@ passport.use(new JWTStrategy({
     secretOrKey   : 'softKitty'
   },
   function (jwtPayload, cb) {
-    return models.User.findOneById(jwtPayload.id)
+    return models.User.findByPk(jwtPayload.id)
     .then(user => {
       return cb(null, user);
     })
