@@ -91,10 +91,12 @@ router.post('', requireAuth(), async (req, res) => {
 
 // TODO make getProfile function, replace two (?) occurancies
 
+// Update article
 router.put('/:slug', requireAuth(), async (req, res) => {
   const currentUser = req.user;
   const { title, description, body } = req.body;
   const article = await getArticleBySlug(req.params.slug);
+  if (!article) res.sendStatus(404);
   const profile = await models.Profile.findOne({
     where: {
       UserId: parseInt(currentUser.id)
@@ -116,6 +118,29 @@ router.put('/:slug', requireAuth(), async (req, res) => {
       .then(article => {
         res.json({ article });
       });
+  } else {
+    res.sendStatus(401);
+  }
+});
+
+// delete article, only own ones...
+router.delete('/:slug', requireAuth(), async (req, res) => {
+  const currentUser = req.user;
+  const article = await getArticleBySlug(req.params.slug);
+  if (!article) res.sendStatus(404);
+  const profile = await models.Profile.findOne({
+    where: {
+      UserId: parseInt(currentUser.id)
+    }
+  });
+  if (article.ProfileId === profile.id) {
+    await models.Article.destroy({
+      where: {
+        id: parseInt(article.id)
+      }
+    }).then(() => {
+      res.sendStatus(200);
+    });
   } else {
     res.sendStatus(401);
   }
