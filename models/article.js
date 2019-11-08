@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   Article.associate = function (models) {
     Article.belongsToMany(models.Tag, { through: 'ArticleTags' });
+    Article.hasMany(models.Comment);
   };
   return Article;
 };
