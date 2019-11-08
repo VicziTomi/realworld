@@ -1,6 +1,13 @@
 var express = require('express');
 var router = express.Router();
 const models = require('../models');
+const passport = require('passport');
+require('../passport');
+// const jwt = require('jsonwebtoken');
+
+const requireAuth = () => (passport.authenticate('jwt', {
+  session: false
+}));
 
 router.get('', async (req, res) => {
   const searcParams = new URLSearchParams(req.query);
@@ -76,13 +83,34 @@ router.get('/:slug', async (req, res) => {
   res.json({ article });
 });
 
-router.post('', async (req, res) => {
-  /* TODO finish
-  const { title } = req.body;
-  const { description } = req.body;
-  const { body } = req.body;
-  const { tagList } = req.body;
-  */
+router.post('', requireAuth(), async (req, res) => {
+  let createdArticle;
+  const { title, description, body, tags } = req.body;
+  const currentUser = req.user;
+  const profile = await models.Profile.findOne({
+    where: {
+      UserId: parseInt(currentUser.id)
+    }
+  });
+  const tagIds = [];
+  for (let i = 0; i < tags.length; ++i) {
+    await models.Tag.findOrCreate({
+      where: {
+        name: tags[i]
+      }
+    }).then(tag => {
+      tagIds.push(tag[0].id);
+    });
+  }
+  await models.Article.create({
+    title,
+    description,
+    body,
+    ProfileId: profile.id
+  }).then(article => {
+    article.setTags(tagIds);
+    res.json({ article, tags: tags });
+  });
 });
 
 module.exports = router;
