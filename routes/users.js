@@ -9,17 +9,13 @@ const requireAuth = () => (passport.authenticate('jwt', {
   session: false
 }));
 
-router.get('', requireAuth(), async (req, res) => {
-  const users = await models.User.findAll();
-  res.json({ users });
+// Get current user based on auth
+router.get('', requireAuth(), (req, res) => {
+  const currentUser = req.user;
+  res.json({ currentUser });
 });
 
-router.get('/:id', requireAuth(), async (req, res) => {
-  const user = await models.User.findByPk(req.params.id);
-  if (!user) res.sendStatus(404);
-  res.json({ user });
-});
-
+// Login here
 router.post('/login', (req, res, next) => {
   passport.authenticate('local', { session: false }, (err, user, info) => {
     if (err || !user) {
@@ -38,6 +34,7 @@ router.post('/login', (req, res, next) => {
   })(req, res);
 });
 
+// Create new user
 router.post('', async (req, res) => {
   const { username, email, bio, image, password } = req.body;
   await models.User.create({
@@ -53,6 +50,42 @@ router.post('', async (req, res) => {
   });
 });
 
+// update current (authenticated) user
+router.put('', requireAuth(), async (req, res) => {
+  const currentUser = req.user;
+  const { username, email, bio, image, password } = req.body;
+  await models.User.update({
+    username,
+    email,
+    bio,
+    image,
+    password,
+    updatedAt: new Date()
+  }, {
+    where: {
+      id: parseInt(currentUser.id)
+    }
+  }).then(() => {
+    res.sendStatus(200);
+  });
+});
+
+/* GET ALL users - not required in API SPECs
+router.get('', requireAuth(), async (req, res) => {
+  const users = await models.User.findAll();
+  res.json({ users });
+});
+*/
+
+/* Pliz ignore... get another user's profile instead
+router.get('/:id', requireAuth(), async (req, res) => {
+  const user = await models.User.findByPk(req.params.id);
+  if (!user) res.sendStatus(404);
+  res.json({ user });
+});
+*/
+
+/* ignore... no user delition specified in SPECs. Instead: delete profile?
 router.delete('/:id', async (req, res) => {
   const user = await models.User.findByPk(req.params.id);
   if (!user) res.sendStatus(404);
@@ -63,27 +96,6 @@ router.delete('/:id', async (req, res) => {
   });
   res.sendStatus(200);
 });
-
-router.put('/:id', async (req, res) => {
-  const user = await models.User.findByPk(req.params.id);
-  if (!user) res.sendStatus(404);
-  const { username } = req.body;
-  const { email } = req.body;
-  const { bio } = req.body;
-  const { image } = req.body;
-  await models.User.update({
-    username,
-    email,
-    bio,
-    image,
-    updatedAt: new Date()
-  }, {
-    where: {
-      id: parseInt(req.params.id)
-    }
-  }).then(() => {
-    res.sendStatus(200);
-  });
-});
+*/
 
 module.exports = router;
