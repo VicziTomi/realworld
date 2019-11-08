@@ -9,13 +9,13 @@ module.exports = (sequelize, DataTypes) => {
     },
     username: DataTypes.STRING,
     password: DataTypes.STRING,
-    email: DataTypes.STRING ,
+    email: DataTypes.STRING,
     token: DataTypes.STRING,
     bio: DataTypes.STRING,
-    image: DataTypes.STRING  
+    image: DataTypes.STRING
   }, {});
-  User.associate = function(models) {
-    
+  User.associate = function (models) {
+
   };
   return User;
 };

@@ -2,7 +2,7 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.bulkInsert('Articles', [ {
+    return queryInterface.bulkInsert('Articles', [{
       title: 'first',
       slug: 'slug',
       description: 'backendish content',
@@ -19,7 +19,7 @@ module.exports = {
       favoritesCount: 3,
       createdAt: new Date(),
       updatedAt: new Date(),
-      ProfileId: 1      
+      ProfileId: 1
     }, {
       title: 'third',
       slug: 'has no slug',
@@ -31,7 +31,7 @@ module.exports = {
       updatedAt: new Date(),
       ProfileId: 2
     }
-  ])
+    ]);
   },
 
   down: (queryInterface, Sequelize) => {

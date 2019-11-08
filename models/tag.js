@@ -9,8 +9,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     name: DataTypes.STRING
   }, {});
-  Tag.associate = function(models) {
-    Tag.belongsToMany(models.Article, {through: 'ArticleTags'});
+  Tag.associate = function (models) {
+    Tag.belongsToMany(models.Article, { through: 'ArticleTags' });
   };
   return Tag;
 };

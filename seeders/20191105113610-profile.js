@@ -8,14 +8,14 @@ module.exports = {
       createdAt: new Date(),
       updatedAt: new Date(),
       userId: 1
-    },{
+    }, {
       username: 'Boki',
       bio: 'Toki boki',
       image: 'url...',
       createdAt: new Date(),
       updatedAt: new Date(),
       userId: 2
-    }])
+    }]);
   },
 
   down: (queryInterface, Sequelize) => {

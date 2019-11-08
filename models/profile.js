@@ -9,9 +9,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     username: DataTypes.STRING,
     bio: DataTypes.STRING,
-    image: DataTypes.STRING,
+    image: DataTypes.STRING
   }, {});
-  Profile.associate = function(models) {
+  Profile.associate = function (models) {
     Profile.belongsTo(models.User);
     Profile.hasMany(models.Article);
   };

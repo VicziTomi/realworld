@@ -11,7 +11,7 @@ module.exports = {
       image: null,
       createdAt: new Date(),
       updatedAt: new Date()
-    },{
+    }, {
       username: 'Boki',
       password: 'pwd',
       email: 'boki@mail.com',
@@ -20,7 +20,7 @@ module.exports = {
       image: 'url...',
       createdAt: new Date(),
       updatedAt: new Date()
-    }], {})
+    }], {});
   },
   down: (queryInterface, Sequelize) => {
     return queryInterface.bulkDelete('Users', null, {});

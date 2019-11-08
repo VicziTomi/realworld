@@ -73,7 +73,7 @@ module.exports = {
       articleId: 3,
       tagId: 7
     }
-  ]);
+    ]);
   },
 
   down: (queryInterface, Sequelize) => {

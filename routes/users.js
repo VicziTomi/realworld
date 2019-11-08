@@ -2,10 +2,9 @@ var express = require('express');
 var router = express.Router();
 const models = require('../models');
 
-
 router.get('', async (req, res) => {
   await models.User.findAll().then(users => {
-    res.json({ users })
+    res.json({ users });
   });
 });
 
@@ -16,15 +15,13 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('', async (req, res) => {
-  const { username } = req.body;
-  const { email } = req.body;
-  const { bio } = req.body;
-  const { image } = req.body;
+  const { username, email, bio, image, password } = req.body;
   await models.User.create({
     username,
-    email, 
+    email,
     bio,
     image,
+    password,
     createdAt: new Date(),
     updatedAt: new Date()
   }).then(() => {
@@ -55,12 +52,12 @@ router.put('/:id', async (req, res) => {
     email,
     bio,
     image,
-    updatedAt: new Date(),
-    }, {
-      where: {
-        id: parseInt(req.params.id)
-      }
-    }).then(() => {
+    updatedAt: new Date()
+  }, {
+    where: {
+      id: parseInt(req.params.id)
+    }
+  }).then(() => {
     res.sendStatus(200);
   });
 });

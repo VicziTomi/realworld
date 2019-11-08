@@ -2,9 +2,8 @@ var express = require('express');
 var router = express.Router();
 const models = require('../models');
 
-
 router.get('', async (req, res) => {
-  let searcParams = new URLSearchParams(req.query);
+  const searcParams = new URLSearchParams(req.query);
 
   if (searcParams.has('author')) {
     const profile = await getAuthor(searcParams.get('author'));
@@ -14,7 +13,7 @@ router.get('', async (req, res) => {
         profileId: profile.id
       }
     }).then(articles => {
-      res.json({ articles, "articlesCount": Object.keys(articles).length });
+      res.json({ articles, articlesCount: Object.keys(articles).length });
     });
   }
   if (searcParams.has('tag')) {
@@ -32,10 +31,9 @@ router.get('', async (req, res) => {
         where: { id: tag.id }
       }]
     }).then(articles => {
-      res.json({ articles, 'articlesCount': Object.keys(articles).length });
+      res.json({ articles, articlesCount: Object.keys(articles).length });
     });
   }
-
 });
 
 const getAuthor = (username) => {
@@ -44,7 +42,7 @@ const getAuthor = (username) => {
       username: username
     }
   });
-}
+};
 
 const getTag = (tag) => {
   return models.Tag.findOne({
@@ -52,7 +50,7 @@ const getTag = (tag) => {
       name: tag
     }
   });
-}
+};
 
 router.get('/:slug', async (req, res) => {
   const article = await models.Article.findOne({
@@ -65,12 +63,12 @@ router.get('/:slug', async (req, res) => {
 });
 
 router.post('', async (req, res) => {
+  /* TODO finish
   const { title } = req.body;
   const { description } = req.body;
   const { body } = req.body;
   const { tagList } = req.body;
-   
-})
-
+  */
+});
 
 module.exports = router;
