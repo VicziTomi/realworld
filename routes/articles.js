@@ -4,7 +4,7 @@ const models = require('../models');
 
 router.get('', async (req, res) => {
   const searcParams = new URLSearchParams(req.query);
-
+  console.log(searcParams);
   if (searcParams.has('author')) {
     const profile = await getAuthor(searcParams.get('author'));
     if (!profile) res.status(404).send('No author with that name');
@@ -20,12 +20,6 @@ router.get('', async (req, res) => {
     const tag = await getTag(searcParams.get('tag'));
     if (!tag) res.status(404).send('No tag wtih that one');
     await models.Article.findAll({
-      /* Code here returns all articles (taglist nested [] or the searched ['tag'] obj)
-      include: [{
-        model: models.Tag,
-        through: { attributes: ['tagId'], where: {tagId: tag.id} }
-      }]
-      */
       include: [{
         model: models.Tag,
         where: { id: tag.id }
@@ -34,7 +28,27 @@ router.get('', async (req, res) => {
       res.json({ articles, articlesCount: Object.keys(articles).length });
     });
   }
+  if (searcParams.has('limit')) {
+    await findAllByLimit(searcParams.get('limit'))
+      .then(articles => {
+        res.json({ articles, articlesCount: Object.keys(articles).length });
+      });
+  }
+  await getAllArticles()
+    .then(articles => {
+      res.json({ articles, articlesCount: Object.keys(articles).length });
+    });
 });
+
+const getAllArticles = () => {
+  return models.Article.findAll();
+};
+
+const findAllByLimit = (limitCount) => {
+  return models.Article.findAll({
+    limit: parseInt(limitCount)
+  });
+};
 
 const getAuthor = (username) => {
   return models.Profile.findOne({
