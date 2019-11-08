@@ -3,12 +3,12 @@ var router = express.Router();
 const models = require('../models');
 const passport = require('passport');
 require('../passport');
-// const jwt = require('jsonwebtoken');
 
 const requireAuth = () => (passport.authenticate('jwt', {
   session: false
 }));
 
+// GET articles, based on query params
 router.get('', async (req, res) => {
   const searcParams = new URLSearchParams(req.query);
   console.log(searcParams);
@@ -47,32 +47,7 @@ router.get('', async (req, res) => {
     });
 });
 
-const getAllArticles = () => {
-  return models.Article.findAll();
-};
-
-const findAllByLimit = (limitCount) => {
-  return models.Article.findAll({
-    limit: parseInt(limitCount)
-  });
-};
-
-const getAuthor = (username) => {
-  return models.Profile.findOne({
-    where: {
-      username: username
-    }
-  });
-};
-
-const getTag = (tag) => {
-  return models.Tag.findOne({
-    where: {
-      name: tag
-    }
-  });
-};
-
+// GET article by slug
 router.get('/:slug', async (req, res) => {
   const article = await models.Article.findOne({
     where: {
@@ -83,8 +58,8 @@ router.get('/:slug', async (req, res) => {
   res.json({ article });
 });
 
+// CREATE new article with given tagList
 router.post('', requireAuth(), async (req, res) => {
-  let createdArticle;
   const { title, description, body, tags } = req.body;
   const currentUser = req.user;
   const profile = await models.Profile.findOne({
@@ -112,5 +87,31 @@ router.post('', requireAuth(), async (req, res) => {
     res.json({ article, tags: tags });
   });
 });
+
+const getAllArticles = () => {
+  return models.Article.findAll();
+};
+
+const findAllByLimit = (limitCount) => {
+  return models.Article.findAll({
+    limit: parseInt(limitCount)
+  });
+};
+
+const getAuthor = (username) => {
+  return models.Profile.findOne({
+    where: {
+      username: username
+    }
+  });
+};
+
+const getTag = (tag) => {
+  return models.Tag.findOne({
+    where: {
+      name: tag
+    }
+  });
+};
 
 module.exports = router;
