@@ -1,17 +1,41 @@
 var express = require('express');
 var router = express.Router();
 const models = require('../models');
+const passport = require('passport');
+require('../passport');
+const jwt = require('jsonwebtoken');
 
-router.get('', async (req, res) => {
-  await models.User.findAll().then(users => {
-    res.json({ users });
-  });
+const requireAuth = () => (passport.authenticate('jwt', {
+  session: false
+}));
+
+router.get('', requireAuth(), async (req, res) => {
+  const users = await models.User.findAll();
+  res.json({ users });
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', requireAuth(), async (req, res) => {
   const user = await models.User.findByPk(req.params.id);
   if (!user) res.sendStatus(404);
   res.json({ user });
+});
+
+router.post('/login', (req, res, next) => {
+  passport.authenticate('local', { session: false }, (err, user, info) => {
+    if (err || !user) {
+      return res.status(400).json({
+        message: info ? info.message : 'Login failed',
+        user: user
+      });
+    }
+    req.login(user, { session: false }, (err) => {
+      if (err) {
+        res.send(err);
+      }
+      const token = jwt.sign(user.toJSON(), 'softKitty');
+      return res.json({ user, token });
+    });
+  })(req, res);
 });
 
 router.post('', async (req, res) => {
