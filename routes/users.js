@@ -36,6 +36,7 @@ router.post('/login', (req, res, next) => {
 
 // Create new user
 router.post('', async (req, res) => {
+  let userCreated;
   const { username, email, bio, image, password } = req.body;
   await models.User.create({
     username,
@@ -45,8 +46,18 @@ router.post('', async (req, res) => {
     password,
     createdAt: new Date(),
     updatedAt: new Date()
-  }).then(() => {
-    res.sendStatus(200);
+  }).then((user) => {
+    userCreated = user;
+  });
+  await models.Profile.create({
+    username: userCreated.username,
+    bio: userCreated.bio,
+    image: userCreated.image,
+    UserId: parseInt(userCreated.id),
+    createdAt: new Date(),
+    updatedAt: new Date()
+  }).then((profile) => {
+    res.json({ profile });
   });
 });
 
@@ -65,9 +76,23 @@ router.put('', requireAuth(), async (req, res) => {
     where: {
       id: parseInt(currentUser.id)
     }
-  }).then(() => {
-    res.sendStatus(200);
   });
+  await models.Profile.update({
+    username,
+    bio,
+    image,
+    updatedAt: new Date()
+  }, {
+    where: {
+      UserId: parseInt(currentUser.id)
+    }
+  });
+  const updatedUser = await models.User.findOne({
+    where: {
+      id: parseInt(currentUser.id)
+    }
+  });
+  res.json({ updatedUser });
 });
 
 /* GET ALL users - not required in API SPECs
