@@ -81,12 +81,65 @@ router.post('', requireAuth(), async (req, res) => {
     title,
     description,
     body,
+    slug: createSlug(title),
     ProfileId: profile.id
   }).then(article => {
     article.setTags(tagIds);
     res.json({ article, tags: tags });
   });
 });
+
+// TODO make getProfile function, replace two (?) occurancies
+
+router.put('/:slug', requireAuth(), async (req, res) => {
+  const currentUser = req.user;
+  const { title, description, body } = req.body;
+  const article = await getArticleBySlug(req.params.slug);
+  const profile = await models.Profile.findOne({
+    where: {
+      UserId: parseInt(currentUser.id)
+    }
+  });
+  if (article.ProfileId === profile.id) {
+    await models.Article.update({
+      title,
+      description,
+      body,
+      slug: createSlug(title),
+      updatedAt: new Date()
+    }, {
+      where: {
+        id: parseInt(article.id)
+      }
+    });
+    await getArticleById(article.id)
+      .then(article => {
+        res.json({ article });
+      });
+  } else {
+    res.sendStatus(401);
+  }
+});
+
+const getArticleById = (id) => {
+  return models.Article.findOne({
+    where: {
+      id: id
+    }
+  });
+};
+
+const getArticleBySlug = (slug) => {
+  return models.Article.findOne({
+    where: {
+      slug: slug
+    }
+  });
+};
+
+const createSlug = (title) => {
+  return title.split(' ').join('-').toLowerCase();
+};
 
 const getAllArticles = () => {
   return models.Article.findAll();
