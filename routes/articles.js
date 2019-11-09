@@ -148,6 +148,38 @@ router.post('/:slug/comments', requireAuth(), async (req, res) => {
   });
 });
 
+// Get article comments
+router.get('/:slug/comments', async (req, res) => {
+  const article = await getArticleBySlug(req.params.slug);
+  if (!article) res.sendStatus(404);
+  const comments = await models.Comment.findAll();
+  res.json({ comments });
+});
+
+// delete an own comment
+router.delete('/:slug/comments/:id', requireAuth(), async (req, res) => {
+  const currentUser = req.user;
+  const profile = await getCurrentUserProfile(currentUser.id);
+  const article = await getArticleBySlug(req.params.slug);
+  if (!article) res.sendStatus(404);
+  const comment = await models.Comment.findOne({
+    where: {
+      id: parseInt(req.params.id)
+    }
+  });
+  if (comment.ProfileId === profile.id) {
+    await models.Comment.destroy({
+      where: {
+        id: parseInt(req.params.id)
+      }
+    }).then(() => {
+      res.sendStatus(200);
+    });
+  } else {
+    res.status(401).send('Cannot delete, not your comment');
+  }
+});
+
 const getCurrentUserProfile = (id) => {
   return models.Profile.findOne({
     where: {
