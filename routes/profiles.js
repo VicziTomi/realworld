@@ -1,15 +1,44 @@
 var express = require('express');
 var router = express.Router();
 const models = require('../models');
+const passport = require('passport');
+require('../passport');
 
+const requireAuth = () => (passport.authenticate('jwt', {
+  session: false
+}));
+
+// get profile by username
 router.get('/:username', async (req, res) => {
-  const profile = await models.Profile.findOne({
-    where: {
-      username: req.params.username
-    }
-  });
+  const profile = await getProfileByUserName(req.params.username);
   if (!profile) res.sendStatus(404);
   res.json({ profile });
 });
+
+// follow a user (profile)
+router.post('/:username/follow', requireAuth(), async (req, res) => {
+  const currentUser = req.user;
+  const toFollowProfile = await getProfileByUserName(req.params.username);
+  if (!toFollowProfile) res.sendStatus(404);
+  const ownProfile = await getProfileByCurrentUser(currentUser.id);
+  await toFollowProfile.addFollower(ownProfile);
+  res.json({ toFollowProfile });
+});
+
+const getProfileByCurrentUser = (id) => {
+  return models.Profile.findOne({
+    where: {
+      UserId: parseInt(id)
+    }
+  });
+};
+
+const getProfileByUserName = (username) => {
+  return models.Profile.findOne({
+    where: {
+      username: username
+    }
+  });
+};
 
 module.exports = router;
