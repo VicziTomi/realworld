@@ -25,6 +25,16 @@ router.post('/:username/follow', requireAuth(), async (req, res) => {
   res.json({ toFollowProfile });
 });
 
+// unfollow a user (profile)
+router.delete('/:username/follow', requireAuth(), async (req, res) => {
+  const currentUser = req.user;
+  const toUnfollowProfile = await getProfileByUserName(req.params.username);
+  if (!toUnfollowProfile) res.sendStatus(404);
+  const ownProfile = await getProfileByCurrentUser(currentUser.id);
+  await toUnfollowProfile.removeFollower(ownProfile);
+  res.json({ toUnfollowProfile });
+});
+
 const getProfileByCurrentUser = (id) => {
   return models.Profile.findOne({
     where: {
