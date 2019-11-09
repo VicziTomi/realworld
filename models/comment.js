@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     body: DataTypes.STRING
   }, {});
   Comment.associate = function (models) {
+    Comment.belongsTo(models.Profile);
   };
   return Comment;
 };
