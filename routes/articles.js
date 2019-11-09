@@ -13,7 +13,7 @@ router.get('', async (req, res) => {
   const searcParams = new URLSearchParams(req.query);
   console.log(searcParams);
   if (searcParams.has('author')) {
-    const profile = await getAuthor(searcParams.get('author'));
+    const profile = await getProfileByUserName(searcParams.get('author'));
     if (!profile) res.status(404).send('No author with that name');
     await models.Article.findAll({
       where: {
@@ -62,11 +62,7 @@ router.get('/:slug', async (req, res) => {
 router.post('', requireAuth(), async (req, res) => {
   const { title, description, body, tags } = req.body;
   const currentUser = req.user;
-  const profile = await models.Profile.findOne({
-    where: {
-      UserId: parseInt(currentUser.id)
-    }
-  });
+  const profile = await getCurrentUserProfile(currentUser.id);
   const tagIds = [];
   for (let i = 0; i < tags.length; ++i) {
     await models.Tag.findOrCreate({
@@ -89,19 +85,13 @@ router.post('', requireAuth(), async (req, res) => {
   });
 });
 
-// TODO make getProfile function, replace two (?) occurancies
-
 // Update article
 router.put('/:slug', requireAuth(), async (req, res) => {
   const currentUser = req.user;
   const { title, description, body } = req.body;
   const article = await getArticleBySlug(req.params.slug);
   if (!article) res.sendStatus(404);
-  const profile = await models.Profile.findOne({
-    where: {
-      UserId: parseInt(currentUser.id)
-    }
-  });
+  const profile = await getCurrentUserProfile(currentUser.id);
   if (article.ProfileId === profile.id) {
     await models.Article.update({
       title,
@@ -128,11 +118,7 @@ router.delete('/:slug', requireAuth(), async (req, res) => {
   const currentUser = req.user;
   const article = await getArticleBySlug(req.params.slug);
   if (!article) res.sendStatus(404);
-  const profile = await models.Profile.findOne({
-    where: {
-      UserId: parseInt(currentUser.id)
-    }
-  });
+  const profile = await getCurrentUserProfile(currentUser.id);
   if (article.ProfileId === profile.id) {
     await models.Article.destroy({
       where: {
@@ -145,6 +131,30 @@ router.delete('/:slug', requireAuth(), async (req, res) => {
     res.sendStatus(401);
   }
 });
+
+// Add comment to an article
+router.post('/:slug/comments', requireAuth(), async (req, res) => {
+  const currentUser = req.user;
+  const { body } = req.body;
+  const article = await getArticleBySlug(req.params.slug);
+  if (!article) res.sendStatus(404);
+  const profile = await getCurrentUserProfile(currentUser.id);
+  await models.Comment.create({
+    body,
+    ArticleId: parseInt(article.id),
+    ProfileId: parseInt(profile.id)
+  }).then(comment => {
+    res.json({ comment });
+  });
+});
+
+const getCurrentUserProfile = (id) => {
+  return models.Profile.findOne({
+    where: {
+      UserId: parseInt(id)
+    }
+  });
+};
 
 const getArticleById = (id) => {
   return models.Article.findOne({
@@ -176,7 +186,7 @@ const findAllByLimit = (limitCount) => {
   });
 };
 
-const getAuthor = (username) => {
+const getProfileByUserName = (username) => {
   return models.Profile.findOne({
     where: {
       username: username
