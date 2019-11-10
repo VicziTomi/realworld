@@ -3,6 +3,8 @@ var router = express.Router();
 const models = require('../models');
 const passport = require('passport');
 require('../passport');
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 
 const requireAuth = () => (passport.authenticate('jwt', {
   session: false
@@ -47,7 +49,6 @@ router.get('', async (req, res) => {
     });
 });
 
-<<<<<<< HEAD
 // articles feed
 router.get('/feed', requireAuth(), async (req, res) => {
   const currentUser = req.user;
@@ -67,8 +68,6 @@ router.get('/feed', requireAuth(), async (req, res) => {
   res.json({ articleFeed });
 });
 
-=======
->>>>>>> parent of 23e8d55... articles feed
 // GET article by slug
 router.get('/:slug', async (req, res) => {
   const article = await models.Article.findOne({
