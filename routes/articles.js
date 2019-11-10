@@ -3,6 +3,8 @@ var router = express.Router();
 const models = require('../models');
 const passport = require('passport');
 require('../passport');
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 
 const requireAuth = () => (passport.authenticate('jwt', {
   session: false
@@ -10,10 +12,10 @@ const requireAuth = () => (passport.authenticate('jwt', {
 
 // GET articles, based on query params
 router.get('', async (req, res) => {
-  const searcParams = new URLSearchParams(req.query);
-  console.log(searcParams);
-  if (searcParams.has('author')) {
-    const profile = await getProfileByUserName(searcParams.get('author'));
+  const searchParams = new URLSearchParams(req.query);
+  console.log(searchParams);
+  if (searchParams.has('author')) {
+    const profile = await getProfileByUserName(searchParams.get('author'));
     if (!profile) res.status(404).send('No author with that name');
     await models.Article.findAll({
       where: {
@@ -23,8 +25,8 @@ router.get('', async (req, res) => {
       res.json({ articles, articlesCount: Object.keys(articles).length });
     });
   }
-  if (searcParams.has('tag')) {
-    const tag = await getTag(searcParams.get('tag'));
+  if (searchParams.has('tag')) {
+    const tag = await getTag(searchParams.get('tag'));
     if (!tag) res.status(404).send('No tag wtih that one');
     await models.Article.findAll({
       include: [{
@@ -35,8 +37,8 @@ router.get('', async (req, res) => {
       res.json({ articles, articlesCount: Object.keys(articles).length });
     });
   }
-  if (searcParams.has('limit')) {
-    await findAllByLimit(searcParams.get('limit'))
+  if (searchParams.has('limit')) {
+    await findAllByLimit(searchParams.get('limit'))
       .then(articles => {
         res.json({ articles, articlesCount: Object.keys(articles).length });
       });
@@ -45,6 +47,25 @@ router.get('', async (req, res) => {
     .then(articles => {
       res.json({ articles, articlesCount: Object.keys(articles).length });
     });
+});
+
+// articles feed
+router.get('/feed', requireAuth(), async (req, res) => {
+  const currentUser = req.user;
+  const profile = await getCurrentUserProfile(currentUser.id);
+  const followingProfiles = await profile.getFollowers();
+  const followingProfilesIDs = [];
+  for (let i = 0; i < followingProfiles.length; ++i) {
+    followingProfilesIDs.push(followingProfiles[i].id);
+  }
+  const articleFeed = await models.Article.findAll({
+    where: {
+      ProfileId: {
+        [Op.or]: followingProfilesIDs
+      }
+    }
+  });
+  res.json({ articleFeed });
 });
 
 // GET article by slug
