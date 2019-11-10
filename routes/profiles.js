@@ -21,7 +21,7 @@ router.post('/:username/follow', requireAuth(), async (req, res) => {
   const toFollowProfile = await getProfileByUserName(req.params.username);
   if (!toFollowProfile) res.sendStatus(404);
   const ownProfile = await getProfileByCurrentUser(currentUser.id);
-  await toFollowProfile.addFollowing(ownProfile);
+  await toFollowProfile.addFollower(ownProfile);
   res.json({ toFollowProfile });
 });
 

@@ -12,10 +12,10 @@ const requireAuth = () => (passport.authenticate('jwt', {
 
 // GET articles, based on query params
 router.get('', async (req, res) => {
-  const searchParams = new URLSearchParams(req.query);
-  console.log(searchParams);
-  if (searchParams.has('author')) {
-    const profile = await getProfileByUserName(searchParams.get('author'));
+  const searcParams = new URLSearchParams(req.query);
+  console.log(searcParams);
+  if (searcParams.has('author')) {
+    const profile = await getProfileByUserName(searcParams.get('author'));
     if (!profile) res.status(404).send('No author with that name');
     await models.Article.findAll({
       where: {
@@ -25,8 +25,8 @@ router.get('', async (req, res) => {
       res.json({ articles, articlesCount: Object.keys(articles).length });
     });
   }
-  if (searchParams.has('tag')) {
-    const tag = await getTag(searchParams.get('tag'));
+  if (searcParams.has('tag')) {
+    const tag = await getTag(searcParams.get('tag'));
     if (!tag) res.status(404).send('No tag wtih that one');
     await models.Article.findAll({
       include: [{
@@ -37,8 +37,8 @@ router.get('', async (req, res) => {
       res.json({ articles, articlesCount: Object.keys(articles).length });
     });
   }
-  if (searchParams.has('limit')) {
-    await findAllByLimit(searchParams.get('limit'))
+  if (searcParams.has('limit')) {
+    await findAllByLimit(searcParams.get('limit'))
       .then(articles => {
         res.json({ articles, articlesCount: Object.keys(articles).length });
       });
@@ -53,7 +53,7 @@ router.get('', async (req, res) => {
 router.get('/feed', requireAuth(), async (req, res) => {
   const currentUser = req.user;
   const profile = await getCurrentUserProfile(currentUser.id);
-  const followingProfiles = await profile.getFollowers();
+  const followingProfiles = await profile.getFollowers(); // naming convention here!
   const followingProfilesIDs = [];
   for (let i = 0; i < followingProfiles.length; ++i) {
     followingProfilesIDs.push(followingProfiles[i].id);

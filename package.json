@@ -22,6 +22,7 @@
     "swagger-express-middleware": "^2.0.4"
   },
   "devDependencies": {
+    "express-swagger-generator": "^1.1.15",
     "nodemon": "^1.19.3"
   }
 }
