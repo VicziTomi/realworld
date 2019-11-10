@@ -8,6 +8,7 @@ var app = require('../app');
 var debug = require('debug')('realworld:server');
 var http = require('http');
 let models = require('../models');
+const createMiddleware = require('swagger-express-middleware');
 
 /**
  * Get port from environment and store in Express.
@@ -27,6 +28,16 @@ var server = http.createServer(app);
  */
 
 return models.sequelize.sync().then(result => {
+  createMiddleware('./swagger.json', app, function (err, middleware) {
+    app.use(
+      middleware.metadata(),
+      middleware.CORS(),
+      middleware.files(),
+      middleware.parseRequest(),
+      middleware.validateRequest(),
+      middleware.mock()
+    );
+  });
   server.listen(port);
   server.on('error', onError);
   server.on('listening', onListening);
