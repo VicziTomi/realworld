@@ -53,7 +53,7 @@ router.get('', async (req, res) => {
 router.get('/feed', requireAuth(), async (req, res) => {
   const currentUser = req.user;
   const profile = await getCurrentUserProfile(currentUser.id);
-  const followingProfiles = await profile.getFollowers();
+  const followingProfiles = await profile.getFollowers(); // naming convention here!
   const followingProfilesIDs = [];
   for (let i = 0; i < followingProfiles.length; ++i) {
     followingProfilesIDs.push(followingProfiles[i].id);

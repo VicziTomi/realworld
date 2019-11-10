@@ -21,6 +21,7 @@
     "sequelize": "^5.19.1"
   },
   "devDependencies": {
+    "express-swagger-generator": "^1.1.15",
     "nodemon": "^1.19.3"
   }
 }
