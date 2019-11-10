@@ -53,34 +53,90 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       },
       "post": {
-        "summary": "/users",
+        "summary": "CREATE new user",
         "consumes": [
           "application/json"
         ],
-        "parameters": [],
-        "responses": {}
+        "parameters": [
+          {
+            "name": "user data",
+            "in": "body",
+            "required": true,
+            "description": "userdata",
+            "schema": {
+              "$ref": "#/definitions/user"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       },
       "put": {
-        "summary": "/users",
+        "summary": "Update current user",
         "consumes": [
           "application/json"
         ],
-        "parameters": [],
-        "responses": {}
+        "security": [
+          {
+            "Token": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user data",
+            "in": "body",
+            "required": true,
+            "description": "userdata",
+            "schema": {
+              "$ref": "#/definitions/user"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
       }
     },
     "/users/login": {
       "post": {
-        "summary": "/users/login",
+        "summary": "login here",
         "consumes": [
           "application/json"
         ],
-        "parameters": [],
-        "responses": {}
+        "parameters": [
+          {
+            "name": "user data",
+            "in": "body",
+            "required": true,
+            "description": "userdata",
+            "schema": {
+              "$ref": "#/definitions/login"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        }
       }
     },
     "/profiles/{username}": {
@@ -260,6 +316,44 @@
         ],
         "parameters": [],
         "responses": {}
+      }
+    }
+  },
+  "definitions": {
+    "user": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "bio": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        },
+        "required": [
+          "username",
+          "email",
+          "password"
+        ]
+      }
+    },
+    "login": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
       }
     }
   }
