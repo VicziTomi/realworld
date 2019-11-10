@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     name: DataTypes.STRING
   }, {});
-  Tag.associate = function (models) {
+  Tag.associate = (models) => {
     Tag.belongsToMany(models.Article, { through: 'ArticleTags' });
   };
   return Tag;

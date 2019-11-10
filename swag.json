@@ -141,7 +141,7 @@
     },
     "/profiles/{username}": {
       "get": {
-        "summary": "/profiles/{username}",
+        "summary": "GET user's profile",
         "consumes": [
           "application/json"
         ],
@@ -152,7 +152,14 @@
             "required": true
           }
         ],
-        "responses": {}
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
       }
     },
     "/profiles/{username}/follow": {

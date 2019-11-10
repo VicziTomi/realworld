@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
     bio: DataTypes.STRING,
     image: DataTypes.STRING
   }, {});
-  Profile.associate = function (models) {
+  Profile.associate = (models) => {
     Profile.belongsTo(models.User);
     Profile.hasMany(models.Article);
     Profile.belongsToMany(models.Profile, { as: 'followers', through: 'Followers', foreignKey: 'FollowerId', otherKey: 'ProfileId' });

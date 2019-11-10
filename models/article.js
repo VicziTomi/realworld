@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     favorited: DataTypes.BOOLEAN,
     favoritesCount: DataTypes.INTEGER
   }, {});
-  Article.associate = function (models) {
+  Article.associate = (models) => {
     Article.belongsToMany(models.Tag, { through: 'ArticleTags' });
     Article.hasMany(models.Comment);
   };
