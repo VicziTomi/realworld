@@ -18,7 +18,8 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "pug": "2.0.0-beta11",
-    "sequelize": "^5.19.1"
+    "sequelize": "^5.19.1",
+    "swagger-express-middleware": "^2.0.4"
   },
   "devDependencies": {
     "nodemon": "^1.19.3"
