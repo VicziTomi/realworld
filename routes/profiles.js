@@ -21,7 +21,7 @@ router.post('/:username/follow', requireAuth(), async (req, res) => {
   const toFollowProfile = await getProfileByUserName(req.params.username);
   if (!toFollowProfile) res.sendStatus(404);
   const ownProfile = await getProfileByCurrentUser(currentUser.id);
-  await toFollowProfile.addFollower(ownProfile);
+  await toFollowProfile.addFollowing(ownProfile);
   res.json({ toFollowProfile });
 });
 
@@ -31,7 +31,7 @@ router.delete('/:username/follow', requireAuth(), async (req, res) => {
   const toUnfollowProfile = await getProfileByUserName(req.params.username);
   if (!toUnfollowProfile) res.sendStatus(404);
   const ownProfile = await getProfileByCurrentUser(currentUser.id);
-  await toUnfollowProfile.removeFollower(ownProfile);
+  await toUnfollowProfile.removeFollowing(ownProfile);
   res.json({ toUnfollowProfile });
 });
 

@@ -53,7 +53,10 @@ router.get('', async (req, res) => {
 router.get('/feed', requireAuth(), async (req, res) => {
   const currentUser = req.user;
   const profile = await getCurrentUserProfile(currentUser.id);
-  const followingProfiles = await profile.getFollowers(); // naming convention here!
+  const followingProfiles = await profile.getFollowers();
+  if (followingProfiles.length === 0) {
+    res.status(404).send('no articles to show, not following anyone');
+  }
   const followingProfilesIDs = [];
   for (let i = 0; i < followingProfiles.length; ++i) {
     followingProfilesIDs.push(followingProfiles[i].id);
@@ -173,7 +176,11 @@ router.post('/:slug/comments', requireAuth(), async (req, res) => {
 router.get('/:slug/comments', async (req, res) => {
   const article = await getArticleBySlug(req.params.slug);
   if (!article) res.sendStatus(404);
-  const comments = await models.Comment.findAll();
+  const comments = await models.Comment.findAll({
+    where: {
+      ArticleId: parseInt(article.id)
+    }
+  });
   res.json({ comments });
 });
 
