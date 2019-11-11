@@ -17,36 +17,30 @@ router.get('', async (req, res) => {
   if (searcParams.has('author')) {
     const profile = await getProfileByUserName(searcParams.get('author'));
     if (!profile) res.status(404).send('No author with that name');
-    await models.Article.findAll({
+    const articles = await models.Article.findAll({
       where: {
         profileId: profile.id
       }
-    }).then(articles => {
-      res.json({ articles, articlesCount: Object.keys(articles).length });
     });
+    res.json({ articles, articlesCount: Object.keys(articles).length });
   }
   if (searcParams.has('tag')) {
     const tag = await getTag(searcParams.get('tag'));
     if (!tag) res.status(404).send('No tag wtih that one');
-    await models.Article.findAll({
+    const articles = await models.Article.findAll({
       include: [{
         model: models.Tag,
         where: { id: tag.id }
       }]
-    }).then(articles => {
-      res.json({ articles, articlesCount: Object.keys(articles).length });
     });
+    res.json({ articles, articlesCount: Object.keys(articles).length });
   }
   if (searcParams.has('limit')) {
-    await findAllByLimit(searcParams.get('limit'))
-      .then(articles => {
-        res.json({ articles, articlesCount: Object.keys(articles).length });
-      });
+    const articles = await findAllByLimit(searcParams.get('limit'));
+    res.json({ articles, articlesCount: Object.keys(articles).length });
   }
-  await getAllArticles()
-    .then(articles => {
-      res.json({ articles, articlesCount: Object.keys(articles).length });
-    });
+  const articles = await getAllArticles();
+  res.json({ articles, articlesCount: Object.keys(articles).length });
 });
 
 // articles feed
@@ -89,13 +83,12 @@ router.post('', requireAuth(), async (req, res) => {
   const profile = await getCurrentUserProfile(currentUser.id);
   const tagIds = [];
   for (let i = 0; i < tags.length; ++i) {
-    await models.Tag.findOrCreate({
+    const tag = await models.Tag.findOrCreate({
       where: {
         name: tags[i]
       }
-    }).then(tag => {
-      tagIds.push(tag[0].id);
     });
+    tagIds.push(tag[0].id);
   }
   await models.Article.create({
     title,
@@ -128,10 +121,8 @@ router.put('/:slug', requireAuth(), async (req, res) => {
         id: parseInt(article.id)
       }
     });
-    await getArticleById(article.id)
-      .then(article => {
-        res.json({ article });
-      });
+    const updatedArticle = await getArticleById(article.id);
+    res.json({ updatedArticle });
   } else {
     res.sendStatus(401);
   }
@@ -148,9 +139,8 @@ router.delete('/:slug', requireAuth(), async (req, res) => {
       where: {
         id: parseInt(article.id)
       }
-    }).then(() => {
-      res.sendStatus(200);
     });
+    res.sendStatus(200);
   } else {
     res.sendStatus(401);
   }
@@ -163,13 +153,12 @@ router.post('/:slug/comments', requireAuth(), async (req, res) => {
   const article = await getArticleBySlug(req.params.slug);
   if (!article) res.sendStatus(404);
   const profile = await getCurrentUserProfile(currentUser.id);
-  await models.Comment.create({
+  const comment = await models.Comment.create({
     body,
     ArticleId: parseInt(article.id),
     ProfileId: parseInt(profile.id)
-  }).then(comment => {
-    res.json({ comment });
   });
+  res.json({ comment });
 });
 
 // Get article comments
@@ -200,9 +189,8 @@ router.delete('/:slug/comments/:id', requireAuth(), async (req, res) => {
       where: {
         id: parseInt(req.params.id)
       }
-    }).then(() => {
-      res.sendStatus(200);
     });
+    res.sendStatus(200);
   } else {
     res.status(401).send('Cannot delete, not your comment');
   }

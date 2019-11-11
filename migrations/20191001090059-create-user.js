@@ -23,9 +23,6 @@ module.exports = {
         unique: true,
         allowNull: false
       },
-      token: {
-        type: Sequelize.STRING
-      },
       bio: {
         type: Sequelize.STRING
       },

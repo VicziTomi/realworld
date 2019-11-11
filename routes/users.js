@@ -1,5 +1,5 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 const models = require('../models');
 const passport = require('passport');
 require('../passport');
@@ -36,9 +36,8 @@ router.post('/login', (req, res, next) => {
 
 // Create new user
 router.post('', async (req, res) => {
-  let userCreated;
   const { username, email, bio, image, password } = req.body;
-  await models.User.create({
+  const userCreated = await models.User.create({
     username,
     email,
     bio,
@@ -46,19 +45,16 @@ router.post('', async (req, res) => {
     password,
     createdAt: new Date(),
     updatedAt: new Date()
-  }).then((user) => {
-    userCreated = user;
   });
-  await models.Profile.create({
+  const profile = await models.Profile.create({
     username: userCreated.username,
     bio: userCreated.bio,
     image: userCreated.image,
     UserId: parseInt(userCreated.id),
     createdAt: new Date(),
     updatedAt: new Date()
-  }).then((profile) => {
-    res.json({ profile });
   });
+  res.json({ profile });
 });
 
 // update current (authenticated) user

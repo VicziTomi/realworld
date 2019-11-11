@@ -5,8 +5,7 @@ module.exports = {
     return queryInterface.bulkInsert('Users', [{
       username: 'Toki',
       password: 'jelszo',
-      email: 'email@domain.com',
-      token: null,
+      email: 'toki@mail.com',
       bio: 'this is a bio',
       image: null,
       createdAt: new Date(),
@@ -15,7 +14,6 @@ module.exports = {
       username: 'Boki',
       password: 'pwd',
       email: 'boki@mail.com',
-      token: null,
       bio: 'Toki boki',
       image: 'url...',
       createdAt: new Date(),
