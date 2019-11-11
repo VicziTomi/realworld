@@ -224,12 +224,44 @@
     },
     "/articles": {
       "get": {
-        "summary": "TODO",
+        "summary": "Get articles basod on query param",
         "consumes": [
           "application/json"
         ],
-        "parameters": [],
-        "responses": {}
+        "parameters": [
+          {
+            "name": "author",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "[OPTIONAL] get articles by author"
+          },
+          {
+            "name": "tag",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "[OPTIONAL] get articles by tag"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "[OPTIONAL] get articles with number limit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
       },
       "post": {
         "summary": "create article",
@@ -382,7 +414,7 @@
     },
     "/articles/{slug}/comments": {
       "post": {
-        "summary": "/articles/{slug}/comments",
+        "summary": "create comment to a article",
         "consumes": [
           "application/json"
         ],
@@ -391,12 +423,36 @@
             "name": "slug",
             "in": "path",
             "required": true
+          },
+          {
+            "name": "comment data",
+            "in": "body",
+            "required": true,
+            "description": "add it here",
+            "schema": {
+              "$ref": "#/definitions/comment"
+            }
           }
         ],
-        "responses": {}
+        "security": [
+          {
+            "Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
       },
       "get": {
-        "summary": "/articles/{slug}/comments",
+        "summary": "GET article's comments",
         "consumes": [
           "application/json"
         ],
@@ -407,12 +463,19 @@
             "required": true
           }
         ],
-        "responses": {}
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
       }
     },
     "/articles/{slug}/comments/{id}": {
       "delete": {
-        "summary": "/articles/{slug}/comments/{id}",
+        "summary": "Delete article's (own) comment",
         "consumes": [
           "application/json"
         ],
@@ -428,7 +491,22 @@
             "required": true
           }
         ],
-        "responses": {}
+        "security": [
+          {
+            "Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
       }
     },
     "/tags": {
@@ -503,6 +581,14 @@
         "description": {
           "type": "string"
         },
+        "body": {
+          "type": "string"
+        }
+      }
+    },
+    "comment": {
+      "type": "object",
+      "properties": {
         "body": {
           "type": "string"
         }
